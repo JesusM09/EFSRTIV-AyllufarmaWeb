@@ -1,29 +1,55 @@
-import '../styles/globals.scss';
-import { ProductCard } from '../components/ProductCard';
+'use client';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
-const products = [
-  { id: 1, name: 'Termómetro Digital', description: 'Termómetro para medición de temperatura corporal.', price: 25.50, image_url: 'https://cdnx.jumpseller.com/copofi-eirl/image/52522232/resize/1000/1000?1725412344' },
-  { id: 2, name: 'Guantes Médicos', description: 'Guantes de látex para uso en procedimientos médicos.', price: 10.00, image_url: 'https://http2.mlstatic.com/D_NQ_NP_723168-MLA80366661065_112024-O.webp' },
-  { id: 3, name: 'Mascarilla Quirúrgica', description: 'Mascarillas desechables para protección contra virus.', price: 5.00, image_url: 'https://static.soltrak.com.pe/fcsaprdsoltrak01/2021/08/012-1.png' },
-  { id: 4, name: 'Termómetro Digital', description: 'Termómetro para medición de temperatura corporal.', price: 25.50, image_url: 'https://cdnx.jumpseller.com/copofi-eirl/image/52522232/resize/1000/1000?1725412344' },
-  { id: 5, name: 'Guantes Médicos', description: 'Guantes de látex para uso en procedimientos médicos.', price: 10.00, image_url: 'https://http2.mlstatic.com/D_NQ_NP_723168-MLA80366661065_112024-O.webp' },
-  { id: 6, name: 'Mascarilla Quirúrgica', description: 'Mascarillas desechables para protección contra virus.', price: 5.00, image_url: 'https://static.soltrak.com.pe/fcsaprdsoltrak01/2021/08/012-1.png' },
-  { id: 7, name: 'Termómetro Digital', description: 'Termómetro para medición de temperatura corporal.', price: 25.50, image_url: 'https://cdnx.jumpseller.com/copofi-eirl/image/52522232/resize/1000/1000?1725412344' },
-  { id: 9, name: 'Guantes Médicos', description: 'Guantes de látex para uso en procedimientos médicos.', price: 10.00, image_url: 'https://http2.mlstatic.com/D_NQ_NP_723168-MLA80366661065_112024-O.webp' },
-  { id: 10, name: 'Mascarilla Quirúrgica', description: 'Mascarillas desechables para protección contra virus.', price: 5.00, image_url: 'https://static.soltrak.com.pe/fcsaprdsoltrak01/2021/08/012-1.png' },
-  { id: 11, name: 'Termómetro Digital', description: 'Termómetro para medición de temperatura corporal.', price: 25.50, image_url: 'https://cdnx.jumpseller.com/copofi-eirl/image/52522232/resize/1000/1000?1725412344' },
-  { id: 12, name: 'Guantes Médicos', description: 'Guantes de látex para uso en procedimientos médicos.', price: 10.00, image_url: 'https://http2.mlstatic.com/D_NQ_NP_723168-MLA80366661065_112024-O.webp' },
-  { id: 13, name: 'Mascarilla Quirúrgica', description: 'Mascarillas desechables para protección contra virus.', price: 5.00, image_url: 'https://static.soltrak.com.pe/fcsaprdsoltrak01/2021/08/012-1.png' },
-];
+interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  image_url: string;
+}
 
-const Home = () => {
+const MainPage = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('/api/products');
+      if (!response.ok) {
+        throw new Error('Error al obtener productos');
+      }
+      const data = await response.json();
+      setProducts(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
   return (
-    <div className="container my-4">
-      <h1 className="text-center mb-4">Bienvenidos a Ayllufarma</h1>
-      <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+    <div className="container my-5">
+      <h1 className="text-center mb-4">Ecommerce Médico</h1>
+      <div className="row">
         {products.map((product) => (
-          <div key={product.id} className="col">
-            <ProductCard product={product} />
+          <div key={product.id} className="col-md-4 mb-4">
+            <div className="card">
+              <img src={product.image_url} alt={product.name} className="card-img-top" />
+              <div className="card-body">
+                <h5 className="card-title">{product.name}</h5>
+                <p className="card-text">{product.description}</p>
+                <p><strong>${product.price}</strong></p>
+                <div className="d-flex justify-content-between">
+                  <Link href={`/product/${product.id}`} className="btn btn-primary">
+                    Ver detalle
+                  </Link>
+                  <button className="btn btn-success">Agregar al carrito</button>
+                </div>
+              </div>
+            </div>
           </div>
         ))}
       </div>
@@ -31,4 +57,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default MainPage;

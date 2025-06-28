@@ -1,22 +1,25 @@
 'use client';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation'; // Usa 'next/navigation' para Next.js 13+
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const router = useRouter();  // Esto debería funcionar si está dentro de la jerarquía adecuada
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!email || !password) {
       setErrorMessage('Por favor, ingrese ambos campos.');
       return;
     }
 
-    // Aquí iría la lógica de autenticación, como una llamada a una API.
-
-    setErrorMessage(''); // Limpiar error al enviar correctamente.
-    alert('Login exitoso'); // Placeholder, reemplaza con tu lógica de login real.
+    // Aquí va la lógica de autenticación
+    // Si el login es exitoso:
+    localStorage.setItem('user_id', '1');  // Simula un login exitoso
+    router.push('/cart');  // Redirige al carrito
   };
 
   return (
