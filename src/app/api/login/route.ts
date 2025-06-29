@@ -1,15 +1,25 @@
-// Ejemplo de API para login (esto puede estar en /src/app/api/login/route.ts)
 import { NextResponse } from 'next/server';
+import connection from '../../../../lib/db';
 
 export async function POST(req: Request) {
-  const { email, password } = await req.json();
+  try {
+    const { email, password } = await req.json();
 
-  // Simular la validación del usuario
-  if (email === 'user@example.com' && password === 'password') {
-    const user_id = 1; // Aquí deberías obtener el user_id desde tu base de datos
+    const query = 'SELECT id, full_name FROM users WHERE email = ? AND password = ?';
+    const [results]: any = await connection.query(query, [email, password]);
 
-    return NextResponse.json({ user_id });
-  } else {
-    return NextResponse.json({ message: 'Credenciales incorrectas' }, { status: 400 });
+    if (results.length === 0) {
+      return NextResponse.json({ message: 'Credenciales incorrectas' }, { status: 401 });
+    }
+
+    const user = results[0];
+
+    return NextResponse.json({
+      user_id: user.id,
+      full_name: user.full_name,
+    });
+  } catch (err) {
+    console.error('Error en login:', err);
+    return NextResponse.json({ message: 'Error en el servidor' }, { status: 500 });
   }
 }

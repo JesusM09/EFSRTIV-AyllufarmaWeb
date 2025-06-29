@@ -1,12 +1,20 @@
-import Navbar from '../components/Navbar';
+'use client';
+
 import '../styles/globals.scss';
+import { UserProvider } from '@/context/UserContext';
+import Navbar from '@/components/Navbar';
+import AuthGuard from '@/components/AuthGuard';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className="bg-gray-50">
-        <Navbar />
-        <main>{children}</main>
+    <html lang="es">
+      <body>
+        <UserProvider>
+          <Navbar />
+          <AuthGuard>
+            {children}
+          </AuthGuard>
+        </UserProvider>
       </body>
     </html>
   );
